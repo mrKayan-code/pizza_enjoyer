@@ -1,31 +1,31 @@
 package model.base;
 
-public class Base {
-    String name;
-    double cost;
+import model.common.Product;
 
-    Base(String name) {
-        this.name = name;
-    }
+public class Base extends Product{
+    private static Double CLASSIC_BASE_COST = null;
 
-    Base(String name, double cost, double default_base_cost) {
-        this.name = name;
-        boolean setcost_success = this.setCost(cost, default_base_cost);
-        if(!setcost_success) {
-            throw new IllegalArgumentException("cost > 1.2*default_base_cost");
+    Base(String name, double cost, boolean isClassic) {
+        super(name, cost);
+        
+        if(isClassic) {
+            CLASSIC_BASE_COST = cost;
+        } else {
+            if (!checkCost(cost)) {
+                throw new IllegalArgumentException("cost > 1.2*default_base_cost");
+            }
         }
     }
     
-    private static boolean checkCost(double cost, double default_base_cost) {
-        return cost <= 1.2*default_base_cost;
+    private static boolean checkCost(double cost) {
+        return cost <= 1.2*CLASSIC_BASE_COST;
     }
 
-    public boolean setCost(double cost, double default_base_cost) {
-        if (checkCost(cost, default_base_cost)) {
-            this.cost = cost;
-            return true;
-        } else {
-            return false;
+    @Override
+    protected void setCost(double cost) {
+        if (!checkCost(cost)) {
+            throw new IllegalArgumentException("cost > 1.2*default_base_cost");
         }
+        super.setCost(cost);
     }
 }

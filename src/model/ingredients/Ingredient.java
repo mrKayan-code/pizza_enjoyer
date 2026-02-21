@@ -1,11 +1,8 @@
 package model.ingredients;
 
-public class Ingredient {    
-    String name;
-    double cost;
-    
+import model.common.Product;
+public class Ingredient extends Product{    
     Ingredient(String name, double cost){
-        this.name = name;
-        this.cost = cost;
+        super(name, cost);
     }
 }

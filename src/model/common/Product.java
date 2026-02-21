@@ -1,16 +1,39 @@
 package model.common;
 
-public class Product {
+import java.util.UUID;
+
+public abstract class Product implements Identifiable, Pricable, Named{
+    private final UUID id = UUID.randomUUID();
     private String name;
     private double cost;
 
-    Product(String name, double cost){
+    protected Product(String name, double cost){
         this.name = name;
+        setCost(cost);
+    }
+    
+    @Override public UUID getId() { 
+        return id; 
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public double getCost() {
+        return cost;
+    }
+
+    protected void setCost(double cost) {
         this.cost = cost;
     }
 
+    @Override
     public String toString() {
         String str = String.format("%d. %s : %.2f$\n", name, cost);
         return str;
     }
+
 }
