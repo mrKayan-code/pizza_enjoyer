@@ -1,4 +1,7 @@
-import java.util.ArrayList;
+package model.order;
+
+import model.ingredients.Ingredient;
+import model.pizza.Pizza;
 
 public class Order {
     //double id;

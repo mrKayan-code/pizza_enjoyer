@@ -1,3 +1,5 @@
+package model.ingredients;
+
 public class Ingredient {    
     String name;
     double cost;

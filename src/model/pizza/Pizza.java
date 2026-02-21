@@ -1,4 +1,8 @@
+package model.pizza;
 import java.util.ArrayList;
+
+import model.base.Base;
+import model.ingredients.Ingredient;
 
 
 public class Pizza {

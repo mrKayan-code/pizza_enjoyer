@@ -1,3 +1,4 @@
+package model.base;
 
 public class Base {
     String name;
