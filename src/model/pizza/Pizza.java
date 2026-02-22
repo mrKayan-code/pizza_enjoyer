@@ -5,22 +5,30 @@ import java.util.UUID;
 import model.base.Base;
 import model.ingredients.Ingredient;
 import model.common.Identifiable;
+import model.common.Named;
 import model.common.Pricable;
+import model.pizza.Size;
 
-public class Pizza implements Identifiable, Pricable {
+public class Pizza implements Identifiable, Pricable, Named {
     private final UUID id = UUID.randomUUID();
-    Base base;
-    ArrayList<Ingredient> ingredients;
-    double cost;
     
-    Pizza(String name, Base base) {
+    private String name;
+    private Size size;
+    private Base base;
+    //private side
+    private ArrayList<Ingredient> ingredients;
+    private double cost;
+    
+    public Pizza(String name, Base base, Size size) {
+        this.name = name;
         this.base = base;
+        this.size = size;
         this.ingredients = new ArrayList<>();
 
     }
 
-    Pizza(Base base, ArrayList<Ingredient> ingredients) {
-        this.base = base;
+    public Pizza(String name, Base base, Size size, ArrayList<Ingredient> ingredients) {
+        this(name, base, size);
         this.ingredients = ingredients;
     }
 
@@ -34,6 +42,11 @@ public class Pizza implements Identifiable, Pricable {
         return calculateCost(0);
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
     public boolean addIngredient(Ingredient ingredient) {
         this.ingredients.add(ingredient);
         return true;
@@ -41,14 +54,39 @@ public class Pizza implements Identifiable, Pricable {
 
     public double calculateCost(double overprice) {
         double all_cost = 0;
-        all_cost += base.cost;
+        all_cost += base.getCost();
         for (Ingredient ingredient : ingredients) {
-            all_cost += ingredient.cost;
+            all_cost += ingredient.getCost();
         }
 
         all_cost += overprice;
         
         cost = all_cost;
         return all_cost;
+    }
+
+    public Base getBase() {
+        return base;
+    }
+
+    public ArrayList<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    @Override
+    public String toString() {
+        String str = String.format("%d. %s : %.2f$\n", name, getCost());
+        str += "\t" + "\tСостав: \n";
+        
+        str += base.toString();
+        for (Ingredient ingredient : ingredients) {
+            str += "\t" + ingredient.toString();
+        }
+
+        return str;
     }
 }

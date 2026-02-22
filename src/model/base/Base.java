@@ -5,10 +5,10 @@ import model.common.Product;
 public class Base extends Product{
     private static Double CLASSIC_BASE_COST = null;
 
-    Base(String name, double cost, boolean isClassic) {
+    Base(String name, double cost, boolean is_classic) {
         super(name, cost);
         
-        if(isClassic) {
+        if(is_classic) {
             CLASSIC_BASE_COST = cost;
         } else {
             if (!checkCost(cost)) {
