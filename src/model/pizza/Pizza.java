@@ -61,6 +61,8 @@ public class Pizza implements Identifiable, Pricable, Named {
 
         all_cost += overprice;
         
+        all_cost *= size.getCostMultiplier();
+
         cost = all_cost;
         return all_cost;
     }
@@ -89,4 +91,5 @@ public class Pizza implements Identifiable, Pricable, Named {
 
         return str;
     }
+
 }
