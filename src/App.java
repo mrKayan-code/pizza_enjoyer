@@ -1,19 +1,24 @@
-import java.util.ArrayList;
-// import java.util.HashMap;
-import java.util.Scanner;
-
-
-
 import model.base.Base;
 import model.ingredients.Ingredient;
-import model.order.Order;
 import model.pizza.Pizza;
+import model.pizza.Size;
+import model.side.CompatibilityMode;
+import model.side.Side;
 
 public class App {  
 
     public static void main(String[] args) throws Exception {
+        Side sesame = new Side(new Ingredient("Кунжут", 30), 30, CompatibilityMode.WHITELIST);
+        sesame.addPizzaToCompatibilityList("Пепперони");
 
-        
+        Base base = new Base("Классическая", 100, true);
+        Pizza pepperoni = new Pizza("Пепперони", base, Size.MEDIUM);
+
+        System.out.println(sesame.isCompatibily(pepperoni));
+        System.out.println(sesame.getCost());
+        System.out.println(sesame.getName());
+        System.out.println(sesame);
+
     }
 
     // public static void main(String[] args) throws Exception {

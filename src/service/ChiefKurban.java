@@ -9,10 +9,12 @@ import model.order.Order;
 import model.pizza.Pizza;
 import model.pizza.Size;
 import model.base.Base;
-
+import model.side.Side;
+import model.side.CompatibilityMode;
 public class ChiefKurban {
     private ArrayList<Base> bases = new ArrayList<>();
     private ArrayList<Ingredient> ingredients = new ArrayList<>();
+    private ArrayList<Side> sides = new ArrayList<>();
     private ArrayList<Pizza> pizzas = new ArrayList<>();
     private ArrayList<Order> orders = new ArrayList<>();
 
@@ -20,9 +22,15 @@ public class ChiefKurban {
         this.addIngredient(new Ingredient("Конина", 100));
         this.addIngredient(new Ingredient("Помидоры", 150));
         this.addIngredient(new Ingredient("Перец халапеньо", 50));
+        this.addIngredient(new Ingredient("Кунжут", 25));
+        this.addIngredient(new Ingredient("Сыр", 40));
 
         this.addBase(new Base("Классическая", 100, true));
         this.addBase(new Base("Черная", 110));
+
+        this.addSide(new Side(new Ingredient("Кунжут", 25), 25, null));
+        this.addSide(new Side(new Ingredient("Сыр", 40), 40, CompatibilityMode.WHITELIST));
+        
     }
 
     private boolean addIngredient(Ingredient ingredient) {
@@ -31,11 +39,12 @@ public class ChiefKurban {
     }
 
     private boolean addBase(Base base) {
-        try {
-            bases.add(base);
-        } catch (Exception e) {
-            return false;
-        }        
+        bases.add(base);
+        return true;
+    }
+
+    private boolean addSide(Side side) {
+        sides.add(side);
         return true;
     }
 

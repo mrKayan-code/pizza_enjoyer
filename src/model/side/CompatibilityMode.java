@@ -1,5 +1,5 @@
 package model.side;
 
 public enum CompatibilityMode {
-    WHITELIST, BLACKLIST, NO;
+    WHITELIST, BLACKLIST;
 }

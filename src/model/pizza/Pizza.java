@@ -7,7 +7,6 @@ import model.ingredients.Ingredient;
 import model.common.Identifiable;
 import model.common.Named;
 import model.common.Pricable;
-import model.pizza.Size;
 import model.side.Side;
 
 public class Pizza implements Identifiable, Pricable, Named {
@@ -16,7 +15,7 @@ public class Pizza implements Identifiable, Pricable, Named {
     private String name;
     private Size size;
     private Base base;
-    // private Side side;
+    private Side side;
     private ArrayList<Ingredient> ingredients;
     //private double cost; TODO(потом мб сделать is_updated_cost а ща оно динамически)
     
@@ -25,7 +24,7 @@ public class Pizza implements Identifiable, Pricable, Named {
         this.base = base;
         this.size = size;
         this.ingredients = new ArrayList<>();
-
+        side = null;
     }
 
     public Pizza(String name, Base base, Size size, ArrayList<Ingredient> ingredients) {
@@ -55,9 +54,15 @@ public class Pizza implements Identifiable, Pricable, Named {
 
     public double calculateCost() {
         double all_cost = 0;
+        
         all_cost += base.getCost();
+        
         for (Ingredient ingredient : ingredients) {
             all_cost += ingredient.getCost();
+        }
+
+        if (side != null) {
+            all_cost += side.getCost();
         }
 
         all_cost *= size.getCostMultiplier();
@@ -76,6 +81,19 @@ public class Pizza implements Identifiable, Pricable, Named {
 
     public Size getSize() {
         return size;
+    }
+
+    public boolean setSide(Side side) {
+        if (side.isCompatibily(this)) {
+            this.side = side;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Side getSide() {
+        return side;
     }
 
     @Override
