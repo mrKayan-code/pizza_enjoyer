@@ -5,7 +5,7 @@ import model.common.Product;
 public class Base extends Product{
     private static Double CLASSIC_BASE_COST = null;
 
-    Base(String name, double cost, boolean is_classic) {
+    public Base(String name, double cost, boolean is_classic) {
         super(name, cost);
         
         if(is_classic) {
@@ -17,7 +17,16 @@ public class Base extends Product{
         }
     }
     
+    public Base(String name, double cost) {
+        this(name, cost, false);
+    }
+
     private static boolean checkCost(double cost) {
+
+        if (CLASSIC_BASE_COST == null) {
+            throw new IllegalStateException("CLASSIC_BASE_COST == null");
+        }
+
         return cost <= 1.2*CLASSIC_BASE_COST;
     }
 

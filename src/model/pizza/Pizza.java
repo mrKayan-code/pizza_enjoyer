@@ -8,6 +8,7 @@ import model.common.Identifiable;
 import model.common.Named;
 import model.common.Pricable;
 import model.pizza.Size;
+import model.side.Side;
 
 public class Pizza implements Identifiable, Pricable, Named {
     private final UUID id = UUID.randomUUID();
@@ -15,9 +16,9 @@ public class Pizza implements Identifiable, Pricable, Named {
     private String name;
     private Size size;
     private Base base;
-    //private side
+    // private Side side;
     private ArrayList<Ingredient> ingredients;
-    private double cost;
+    //private double cost; TODO(потом мб сделать is_updated_cost а ща оно динамически)
     
     public Pizza(String name, Base base, Size size) {
         this.name = name;
@@ -39,7 +40,7 @@ public class Pizza implements Identifiable, Pricable, Named {
 
     @Override
     public double getCost() {
-        return calculateCost(0);
+        return calculateCost();
     }
 
     @Override
@@ -52,18 +53,16 @@ public class Pizza implements Identifiable, Pricable, Named {
         return true;
     }
 
-    public double calculateCost(double overprice) {
+    public double calculateCost() {
         double all_cost = 0;
         all_cost += base.getCost();
         for (Ingredient ingredient : ingredients) {
             all_cost += ingredient.getCost();
         }
 
-        all_cost += overprice;
-        
         all_cost *= size.getCostMultiplier();
 
-        cost = all_cost;
+        // cost = all_cost;
         return all_cost;
     }
 
@@ -81,13 +80,13 @@ public class Pizza implements Identifiable, Pricable, Named {
 
     @Override
     public String toString() {
-        String str = String.format("%d. %s : %.2f$\n", name, getCost());
-        str += "\t" + "\tСостав: \n";
+        String str = String.format("%s %s : %.2f$\n", size.getName(), name, getCost());
+        // str += "\t" + "\tСостав: \n";
         
-        str += base.toString();
-        for (Ingredient ingredient : ingredients) {
-            str += "\t" + ingredient.toString();
-        }
+        // str += base.toString();
+        // for (Ingredient ingredient : ingredients) {
+        //     str += "\t" + ingredient.toString();
+        // }
 
         return str;
     }
