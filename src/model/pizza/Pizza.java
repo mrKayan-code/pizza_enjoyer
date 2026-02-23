@@ -1,5 +1,6 @@
 package model.pizza;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import model.base.Base;
@@ -16,20 +17,42 @@ public class Pizza implements Identifiable, Pricable, Named {
     private Size size;
     private Base base;
     private Side side;
-    private ArrayList<Ingredient> ingredients;
+    private ArrayList<Slice> slices = new ArrayList<>();
     //private double cost; TODO(потом мб сделать is_updated_cost а ща оно динамически)
     
     public Pizza(String name, Base base, Size size) {
         this.name = name;
         this.base = base;
         this.size = size;
-        this.ingredients = new ArrayList<>();
         side = null;
     }
 
     public Pizza(String name, Base base, Size size, ArrayList<Ingredient> ingredients) {
         this(name, base, size);
-        this.ingredients = ingredients;
+            createUniformSlices(ingredients);
+    }
+
+    public static Pizza createHalfCombined(String name, Base base, Size size, ArrayList<Ingredient> first_half_ingrs, ArrayList<Ingredient> second_half_ingrs) {
+        Pizza pizza = new Pizza(name, base, size);
+
+        int slices_count = size.getSlicesCount();
+        for (int i = 0; i < slices_count/2; i++) {
+            pizza.addSlice(new Slice(i, first_half_ingrs));
+        }
+
+        for (int i = slices_count/2; i < size.getSlicesCount(); i++) {
+            pizza.addSlice(new Slice(i, second_half_ingrs));
+        }
+
+        return pizza;
+        
+    }
+
+    private void createUniformSlices(ArrayList<Ingredient> ingredients) {
+        for (int i = 0; i < size.getSlicesCount(); i++) {
+            Slice slice = new Slice(i, ingredients);
+            slices.add(slice);
+        }
     }
 
     @Override
@@ -47,8 +70,8 @@ public class Pizza implements Identifiable, Pricable, Named {
         return name;
     }
 
-    public boolean addIngredient(Ingredient ingredient) {
-        this.ingredients.add(ingredient);
+    public boolean addSlice(Slice slice) {
+        this.slices.add(slice);
         return true;
     }
 
@@ -57,8 +80,8 @@ public class Pizza implements Identifiable, Pricable, Named {
         
         all_cost += base.getCost();
         
-        for (Ingredient ingredient : ingredients) {
-            all_cost += ingredient.getCost();
+        for (Slice slice : slices) {
+            all_cost += slice.getCost();
         }
 
         if (side != null) {
@@ -75,8 +98,8 @@ public class Pizza implements Identifiable, Pricable, Named {
         return base;
     }
 
-    public ArrayList<Ingredient> getIngredients() {
-        return ingredients;
+    public ArrayList<Slice> getSlices() {
+        return slices;
     }
 
     public Size getSize() {
@@ -107,6 +130,17 @@ public class Pizza implements Identifiable, Pricable, Named {
         // }
 
         return str;
+    }
+
+    public Pizza GetCopy() {
+        Pizza copy = new Pizza(name, base, size);
+        copy.setSide(side);
+
+        for (Slice slice : slices) {
+            copy.addSlice(slice);
+        }
+
+        return copy;
     }
 
 }

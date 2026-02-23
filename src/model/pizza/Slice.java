@@ -1,0 +1,53 @@
+package model.pizza;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import model.common.Pricable;
+import model.ingredients.Ingredient;
+
+public class Slice implements Pricable{
+    private final int position;
+    private ArrayList<Ingredient> ingredients = new ArrayList<>();
+
+    public Slice (int position) {
+        this.position = position;
+    }
+
+    public Slice(int position, ArrayList<Ingredient> ingredients) {
+        this(position);
+        this.ingredients = ingredients;
+    }
+
+    public int getPosition() { 
+        return position; 
+    }
+    
+    public void addIngredient(Ingredient ingredient) {
+        ingredients.add(ingredient);
+    }
+    
+    public List<Ingredient> getIngredients() {
+        return new ArrayList<>(ingredients);
+    }
+
+    @Override
+    public double getCost() {
+        return calculateCost();
+    }
+
+    public double calculateCost() {
+        double all_cost = 0;
+
+        for (Ingredient ingredient : ingredients) {
+            all_cost += ingredient.getCost();
+        }
+
+        return all_cost;
+    }
+
+    public boolean isEmpty() {
+        return ingredients.isEmpty();
+    }
+
+}

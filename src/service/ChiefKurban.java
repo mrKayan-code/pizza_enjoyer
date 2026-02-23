@@ -1,11 +1,14 @@
 package service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import model.ingredients.Ingredient;
 import model.order.Order;
+import model.order.OrderItem;
+import model.order.OrderStatus;
 import model.pizza.Pizza;
 import model.pizza.Size;
 import model.base.Base;
@@ -15,7 +18,7 @@ public class ChiefKurban {
     private ArrayList<Base> bases = new ArrayList<>();
     private ArrayList<Ingredient> ingredients = new ArrayList<>();
     private ArrayList<Side> sides = new ArrayList<>();
-    private ArrayList<Pizza> pizzas = new ArrayList<>();
+    private ArrayList<Pizza> catalog_pizzas = new ArrayList<>();
     private ArrayList<Order> orders = new ArrayList<>();
 
     public ChiefKurban() {
@@ -55,16 +58,61 @@ public class ChiefKurban {
             pizza.addIngredient(ingredient);
         }
         
-        pizzas.add(pizza);
+        catalog_pizzas.add(pizza);
         return pizza;
     }
 
     public List<Pizza> filterPizzasByIngredient(String ingredientName) {
-        return pizzas.stream()
+        return catalog_pizzas.stream()
             .filter(pizza -> pizza.getIngredients().stream()
             .anyMatch(ingredient -> ingredient.getName().toLowerCase().contains(ingredientName.toLowerCase())))
             .collect(Collectors.toList());
     }
+
+    public Order createOrder() {
+        Order order = new Order();
+        orders.add(order);
+        return order;
+    }
+
+    public ArrayList<Order> getOrders() {
+        return new ArrayList<>(orders);
+    }
+
+    public List<Order> filterOrdersByDate(LocalDate date) {
+        return orders.stream()
+            .filter(order -> order.getOrderTime().equals(date))
+            .collect(Collectors.toList()); //TODO(разобраться с датами в джаве)
+    }
+
+    public List<Order> getScheduledOrders() {
+        return orders.stream()
+            .filter(order -> order.isScheduled())
+            .collect(Collectors.toList());
+    }
+
+    public List<Order> filterOrdersByStatus(OrderStatus status) {
+        return orders.stream()
+            .filter(order -> order.getStatus() == status)
+            .collect(Collectors.toList());
+    }
+
+    public OrderItem createOrderItemFromCatalog(Pizza catalog_pizza, int quantity, boolean double_ingredients) {
+        Pizza order_pizza = catalog_pizza.GetCopy();
+        
+        if (double_ingredients) {
+            for (Ingredient ingredient : catalog_pizza.getIngredients()) {
+                order_pizza.addIngredient(ingredient);
+            }
+        }
+
+        return new OrderItem(order_pizza, quantity);
+    }
+
+    public OrderItem createCustomOrderItem(Pizza custom_pizza, int quantity) {
+        return new OrderItem(custom_pizza, quantity, true);
+    }
+
     
     // public List<Order> filterOrdersByDate(date) {
     //     TODO(нужно при создании заказов добавлять время)

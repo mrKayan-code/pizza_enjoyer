@@ -9,7 +9,8 @@ public abstract class Product implements Identifiable, Pricable, Named{
 
     protected Product(String name, double cost){
         this.name = name;
-        setCost(cost);
+        this.cost = cost;
+        // setCost(cost); //TODO(пока костыль)
     }
     
     @Override public UUID getId() { 

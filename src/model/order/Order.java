@@ -1,39 +1,101 @@
 package model.order;
 
-import model.ingredients.Ingredient;
-import model.pizza.Pizza;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.UUID;
 
-public class Order {
-    //double id;
-    Pizza pizza;
-    double total_cost;
-    boolean payed;
+import model.common.Identifiable;
 
-    Order(Pizza pizza) {
-        this.pizza = pizza;
-        total_cost = pizza.calculateCost(total_cost);
-        payed = false;
+public class Order implements Identifiable {
+    private final UUID id = UUID.randomUUID();
+    private ArrayList<OrderItem> positions = new ArrayList<>();
+    private LocalDateTime order_time;
+    private LocalDateTime schedule_time = null;
+    private OrderStatus order_status;
+    private ArrayList<Guest> guests; //TODO(надо добавить фунцию кому из гостей какую пиццу дать)
+
+    public Order() {
+        this.order_time = LocalDateTime.now();
+        this.order_status = OrderStatus.PENDING;
     }
 
-    public void printCheck() {
-        System.out.println("чек по заказу");
+    public boolean addPosition(OrderItem position) {
+        positions.add(position);
+        return true;
+    }
 
-        System.out.printf("база\t стоимость\n");
-        System.out.printf("%s\t %.2f$\n", pizza.base.name, pizza.base.cost);
-        System.out.println();
+    public void removePosition(OrderItem position) {
+        positions.remove(position);
+    }
 
-        System.out.printf("ингредиент\t стоимость\n");
-        for (Ingredient ingredient : pizza.ingredients) {
-            System.out.printf("%s\t %.2f$\n", ingredient.name, ingredient.cost);
-        }
-        System.out.println();
-        
-        System.out.printf("общая стоимость:\t%.2f$\n", total_cost);
-        System.out.println();
+    public ArrayList<OrderItem> getPositions() {
+        return positions;
+    }
+
+    public LocalDateTime getOrderTime() {
+        return order_time;
+    }
+    
+    public LocalDateTime getScheduleTime() {
+        return schedule_time;
+    }
+
+    public void setScheduleTime(LocalDateTime schedule_time) {
+        this.schedule_time = schedule_time;
+        this.order_status = OrderStatus.SCHEDULED;
+    }
+    
+    public boolean isScheduled() {
+        return schedule_time != null;
+    }
+
+    public OrderStatus getStatus() {
+        return order_status;
     }
 
     public void pay() {
-        payed = true;
+        this.order_status = OrderStatus.PAID;
+    }
+
+    public double calculateCost() {
+        double all_cost = 0;
+
+        for (OrderItem position : positions) {
+            all_cost += position.calculateCost();
+        }
+
+        return all_cost;
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append(String.format("Заказ id: %s", id.toString()));
+
+        sb.append(String.format("Статус: %s", order_status.getName()));
+
+        sb.append(String.format("Время заказа: %s", order_time.toString()));
+
+        if (isScheduled()) {
+            sb.append(String.format("Отложен до: %s", schedule_time.toString()));
+        }
+
+        sb.append(String.format("Позиции:\n"));
+
+        for (OrderItem position : positions) {
+            sb.append(String.format("\t%s", position.toString()));
+        }
+
+        sb.append(String.format("\n"));
+        sb.append(String.format("К оплате: %.2f$", calculateCost()));
+        
+        return sb.toString();
     }
 
 }
