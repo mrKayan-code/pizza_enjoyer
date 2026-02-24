@@ -1,15 +1,16 @@
-import model.base.Base;
-import model.ingredients.Ingredient;
-import model.pizza.Pizza;
-import model.pizza.Size;
-import model.side.CompatibilityMode;
-import model.side.Side;
+import java.util.Scanner;
+
+import service.ChiefKurban;
+import view.MenuHandler;
 
 public class App {  
 
     public static void main(String[] args) throws Exception {   
-        
+        ChiefKurban kitchen = new ChiefKurban();
 
+        MenuHandler mh = new MenuHandler(kitchen, new Scanner(System.in, "cp866"));
+        mh.start();
+        
     }
 
     // public static void main(String[] args) throws Exception {

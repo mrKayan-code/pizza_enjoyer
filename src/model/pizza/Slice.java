@@ -1,7 +1,6 @@
 package model.pizza;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import model.common.Pricable;
 import model.ingredients.Ingredient;
@@ -27,7 +26,7 @@ public class Slice implements Pricable{
         ingredients.add(ingredient);
     }
     
-    public List<Ingredient> getIngredients() {
+    public ArrayList<Ingredient> getIngredients() {
         return new ArrayList<>(ingredients);
     }
 
@@ -48,6 +47,27 @@ public class Slice implements Pricable{
 
     public boolean isEmpty() {
         return ingredients.isEmpty();
+    }
+
+    public boolean hasSameIngredientsAs(Slice other) {
+        if (other == null) return false;
+        if (this.ingredients.size() != other.ingredients.size()) return false;
+        
+        for (Ingredient ing : this.ingredients) {
+            if (!other.ingredients.contains(ing)) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("\tкусок %d: %.2f$", position, getCost()));
+        for (Ingredient ingredient : ingredients) {
+            sb.append("\t\t" + ingredient.toString());
+        }
+
+        return sb.toString();
     }
 
 }

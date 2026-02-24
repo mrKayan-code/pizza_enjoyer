@@ -1,6 +1,5 @@
 package service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,17 +7,19 @@ import java.util.stream.Collectors;
 import model.ingredients.Ingredient;
 import model.order.Order;
 import model.order.OrderItem;
-import model.order.OrderStatus;
 import model.pizza.Pizza;
 import model.pizza.Size;
+import model.pizza.Slice;
 import model.base.Base;
 import model.side.Side;
 import model.side.CompatibilityMode;
+
+
 public class ChiefKurban {
-    private ArrayList<Base> bases = new ArrayList<>();
-    private ArrayList<Ingredient> ingredients = new ArrayList<>();
-    private ArrayList<Side> sides = new ArrayList<>();
-    private ArrayList<Pizza> catalog_pizzas = new ArrayList<>();
+    private ProductCatalog<Base> bases = new ProductCatalog<>();
+    private ProductCatalog<Ingredient> ingredients = new ProductCatalog<>();
+    private ProductCatalog<Side> sides = new ProductCatalog<>();
+    private ProductCatalog<Pizza> catalog_pizzas = new ProductCatalog<>();
     private ArrayList<Order> orders = new ArrayList<>();
 
     public ChiefKurban() {
@@ -35,7 +36,19 @@ public class ChiefKurban {
         this.addSide(new Side(new Ingredient("Сыр", 40), 40, CompatibilityMode.WHITELIST));
         
     }
+    
+    public ArrayList<Ingredient> getIngredients() {
+        return ingredients.getAll();
+    }
 
+    public ArrayList<Base> getBases() {
+        return bases.getAll();
+    }
+
+    public ArrayList<Side> getSides() {
+        return sides.getAll();
+    }
+    
     private boolean addIngredient(Ingredient ingredient) {
         ingredients.add(ingredient);
         return true;
@@ -51,22 +64,11 @@ public class ChiefKurban {
         return true;
     }
 
-    public Pizza createPizza(String name, Base base, Size size, List<Ingredient> ingredients) {
-        Pizza pizza = new Pizza(name, base, size);
-        
-        for (Ingredient ingredient : ingredients) {
-            pizza.addIngredient(ingredient);
-        }
-        
+    public Pizza createUniformPizza(String name, Base base, Size size, ArrayList<Ingredient> ingredients/*Side side*/) {
+        Pizza pizza = new Pizza(name, base, size, ingredients);
+        // pizza.setSide(side);
         catalog_pizzas.add(pizza);
         return pizza;
-    }
-
-    public List<Pizza> filterPizzasByIngredient(String ingredientName) {
-        return catalog_pizzas.stream()
-            .filter(pizza -> pizza.getIngredients().stream()
-            .anyMatch(ingredient -> ingredient.getName().toLowerCase().contains(ingredientName.toLowerCase())))
-            .collect(Collectors.toList());
     }
 
     public Order createOrder() {
@@ -76,13 +78,7 @@ public class ChiefKurban {
     }
 
     public ArrayList<Order> getOrders() {
-        return new ArrayList<>(orders);
-    }
-
-    public List<Order> filterOrdersByDate(LocalDate date) {
-        return orders.stream()
-            .filter(order -> order.getOrderTime().equals(date))
-            .collect(Collectors.toList()); //TODO(разобраться с датами в джаве)
+        return orders;
     }
 
     public List<Order> getScheduledOrders() {
@@ -91,18 +87,14 @@ public class ChiefKurban {
             .collect(Collectors.toList());
     }
 
-    public List<Order> filterOrdersByStatus(OrderStatus status) {
-        return orders.stream()
-            .filter(order -> order.getStatus() == status)
-            .collect(Collectors.toList());
-    }
-
     public OrderItem createOrderItemFromCatalog(Pizza catalog_pizza, int quantity, boolean double_ingredients) {
         Pizza order_pizza = catalog_pizza.GetCopy();
         
         if (double_ingredients) {
-            for (Ingredient ingredient : catalog_pizza.getIngredients()) {
-                order_pizza.addIngredient(ingredient);
+            for (Slice slice : catalog_pizza.getSlices()) {
+                for (Ingredient ingredient : slice.getIngredients()) {
+                    slice.addIngredient(ingredient);
+                }                
             }
         }
 
@@ -113,8 +105,4 @@ public class ChiefKurban {
         return new OrderItem(custom_pizza, quantity, true);
     }
 
-    
-    // public List<Order> filterOrdersByDate(date) {
-    //     TODO(нужно при создании заказов добавлять время)
-    // }
 }

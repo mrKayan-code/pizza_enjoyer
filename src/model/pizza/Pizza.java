@@ -1,6 +1,8 @@
 package model.pizza;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import model.base.Base;
@@ -29,7 +31,7 @@ public class Pizza implements Identifiable, Pricable, Named {
 
     public Pizza(String name, Base base, Size size, ArrayList<Ingredient> ingredients) {
         this(name, base, size);
-            createUniformSlices(ingredients);
+        createUniformSlices(ingredients);
     }
 
     public static Pizza createHalfCombined(String name, Base base, Size size, ArrayList<Ingredient> first_half_ingrs, ArrayList<Ingredient> second_half_ingrs) {
@@ -88,8 +90,6 @@ public class Pizza implements Identifiable, Pricable, Named {
             all_cost += side.getCost();
         }
 
-        all_cost *= size.getCostMultiplier();
-
         // cost = all_cost;
         return all_cost;
     }
@@ -143,4 +143,45 @@ public class Pizza implements Identifiable, Pricable, Named {
         return copy;
     }
 
-}
+    public boolean isUniform() {
+        if (slices.isEmpty()) return true;
+
+        Slice first = slices.get(0);
+        
+        for (int i = 1; i < size.getSlicesCount(); i++) {
+            if (!first.hasSameIngredientsAs(slices.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Ingredient> getAllIngredients() {
+        ArrayList<Ingredient> all = new ArrayList<>();
+        for (Slice slice : slices) {
+            all.addAll(slice.getIngredients());
+        }
+        return all;
+    }
+
+    public ArrayList<Ingredient> getUniqueIngredients() {
+        Map<String, Ingredient> uniqueMap = new LinkedHashMap<>();
+        
+        for (Slice slice : slices) {
+            for (Ingredient ing : slice.getIngredients()) {
+                if (!uniqueMap.containsKey(ing.getName())) {
+                    uniqueMap.put(ing.getName(), ing);
+                }
+            }
+        }
+        
+        return new ArrayList<>(uniqueMap.values());
+    }
+
+    public boolean hasIngredient(String ingredientName) {
+        return slices.stream()
+            .flatMap(slice -> slice.getIngredients().stream())
+            .anyMatch(ing -> ing.getName().equalsIgnoreCase(ingredientName));
+    }
+
+}   
