@@ -3,8 +3,6 @@ package view;
 import java.util.List;
 import java.util.Scanner;
 
-import model.ingredients.Ingredient;
-
 public class ConsoleView {
     private final Scanner scanner;
 

@@ -34,3 +34,4 @@ public class RecipeItem <T extends Named & Pricable> {
     }
 
 }
+//TODO(мб потом, но пока я не знаю как это заинжектить в структуру ну мне впадлу просто на еще один уровень понижать product)

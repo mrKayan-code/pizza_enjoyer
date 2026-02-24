@@ -64,7 +64,7 @@ public class Slice implements Pricable{
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("\tкусок %d: %.2f$", position, getCost()));
         for (Ingredient ingredient : ingredients) {
-            sb.append("\t\t" + ingredient.toString());
+            sb.append("\t" + ingredient.toString());
         }
 
         return sb.toString();
