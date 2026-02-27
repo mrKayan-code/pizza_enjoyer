@@ -1,19 +1,20 @@
 package model.pizza;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import model.common.Pricable;
 import model.ingredients.Ingredient;
 
 public class Slice implements Pricable{
     private final int position;
-    private ArrayList<Ingredient> ingredients = new ArrayList<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     public Slice (int position) {
         this.position = position;
     }
 
-    public Slice(int position, ArrayList<Ingredient> ingredients) {
+    public Slice(int position, List<Ingredient> ingredients) {
         this(position);
         this.ingredients = ingredients;
     }
@@ -26,7 +27,7 @@ public class Slice implements Pricable{
         ingredients.add(ingredient);
     }
     
-    public ArrayList<Ingredient> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return new ArrayList<>(ingredients);
     }
 
@@ -62,9 +63,9 @@ public class Slice implements Pricable{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("\tкусок %d: %.2f$", position, getCost()));
+        sb.append(String.format("\tкусок %d: %.2fтнг", position, getCost()));
         for (Ingredient ingredient : ingredients) {
-            sb.append("\t" + ingredient.toString());
+            sb.append("\t    " + ingredient.toString());
         }
 
         return sb.toString();

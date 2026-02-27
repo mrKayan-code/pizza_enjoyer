@@ -30,7 +30,7 @@ public class RecipeItem <T extends Named & Pricable> {
 
     @Override
     public String toString() {
-        return String.format("%s - %dшт. = %.2f$", item.getName(), quantity, getTotalCost());
+        return String.format("%s - %dшт. = %.2fтнг", item.getName(), quantity, getTotalCost());
     }
 
 }

@@ -20,7 +20,7 @@ public class Order implements Identifiable {
     }
 
     public boolean addPosition(OrderItem position) {
-        positions.add(position);
+        positions.add(position); //TODO(проверять на олинаковые пиццы и добавлять )
         return true;
     }
 
@@ -93,7 +93,7 @@ public class Order implements Identifiable {
         }
 
         sb.append(String.format("\n"));
-        sb.append(String.format("К оплате: %.2f$", calculateCost()));
+        sb.append(String.format("К оплате: %.2fтнг", calculateCost()));
         
         return sb.toString();
     }

@@ -3,6 +3,11 @@ package view;
 import java.util.List;
 import java.util.Scanner;
 
+import model.common.Product;
+import model.pizza.Pizza;
+import util.Comparators;
+import util.FilterUtils;
+
 public class ConsoleView {
     private final Scanner scanner;
 
@@ -132,6 +137,140 @@ public class ConsoleView {
         println("\nНажмите что-то для продолжения...");
         readLine();
         clear();
+    }
+    
+    public <T extends Product> void showProductCatalog(List<T> original_catalog, String header, String message) {
+        boolean running = true;
+        while (running) {
+            clear();
+            printHeader(header);
+            
+            List<T> filtered = getFilteredProductCatalog(original_catalog);
+            
+            if (filtered == null) {
+                running = false;
+                break;
+            }
+            
+            println(message);
+            printList(filtered, item -> item.toString());
+
+            awaitContinue();
+        }
+    }
+
+    public <T extends Product> List<T> getFilteredProductCatalog(List<T> original_catalog) {
+        List<T> copy = List.copyOf(original_catalog);
+
+        List<String> options = List.of(
+            "Искать по названию",
+            "Сортировать по цене /",
+            "Сортировать по цене \\",
+            "Сортировать по названию"
+        );
+        
+        printOptions(options);
+        println("\t[any] Без сортировки");            
+        
+        String choice = readLine();
+        
+        switch (choice) {
+            case "0":
+                String filter = readLine("Искать");
+                copy = FilterUtils.filter(copy, ing -> 
+                    ing.getName().toLowerCase().contains(filter.toLowerCase())
+                );
+                break;
+            case "1":
+                copy = FilterUtils.filterAndSort(copy, ing -> true, 
+                    Comparators.byPrice(false));
+                break;
+            case "2":
+                copy = FilterUtils.filterAndSort(copy, ing -> true, 
+                    Comparators.byPrice(true));
+                break;
+            case "3":
+                copy = FilterUtils.filterAndSort(copy, ing -> true, 
+                    Comparators.byName(false));
+                break;
+            case ":e":
+                return null;
+        }
+
+        return copy;
+    }
+
+    public void showPizzaCatalog(List<Pizza> original_catalog, String header, String message) {
+        boolean running = true;
+        while (running) {
+            clear();
+            printHeader(header);
+            
+            List<Pizza> filtered = getFilteredCatalogPizzas(original_catalog);
+            
+            if (filtered == null) {
+                running = false;
+                return;
+            }
+
+            println(message);
+            printList(filtered, item -> item.getFullPizzaCompositionStringForCatalog());
+
+            // println("\n расширенный вариант:");
+            // printList(filtered, item -> item.getFullPizzaCompositionString());
+
+            awaitContinue();
+
+        }
+    }
+
+    public List<Pizza> getFilteredCatalogPizzas(List<Pizza> original_catalog) {
+        List<Pizza> copy = List.copyOf(original_catalog);
+            
+        List<String> options = List.of(
+            "Искать по названию",
+            "Искать по ингредиенту",
+            "Сортировать по цене /",
+            "Сортировать по цене \\",
+            "Сортировать по названию"
+        );
+
+        printOptions(options);
+        println("\t[any] Без сортировки");          
+        
+        String choice = readLine();
+        String filter;
+        
+        switch (choice) {
+            case "0":
+                filter = readLine("Искать");
+                copy = FilterUtils.filter(copy, pizza -> 
+                    pizza.getName().toLowerCase().contains(filter.toLowerCase())
+                );
+                break;
+            case "1":
+                filter = readLine("Искать");
+                copy = FilterUtils.filter(copy, pizza -> 
+                    pizza.getUniqueIngredients().stream().anyMatch(ing -> ing.getName().toLowerCase().contains(filter.toLowerCase()))
+                );
+                break;
+            case "2":
+                copy = FilterUtils.filterAndSort(copy, pizza -> true, 
+                    Comparators.byPrice(false));
+                break;
+            case "3":
+                copy = FilterUtils.filterAndSort(copy, pizza -> true, 
+                    Comparators.byPrice(true));
+                break;
+            case "4":
+                copy = FilterUtils.filterAndSort(copy, pizza -> true, 
+                    Comparators.byName(false));
+                break;
+            case ":e":
+                return null;
+        }
+
+        return copy;
     }
 
 }

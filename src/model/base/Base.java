@@ -12,7 +12,7 @@ public class Base extends Product{
             CLASSIC_BASE_COST = cost;
         } else {
             if (!checkCost(cost)) {
-                throw new IllegalArgumentException("cost > 1.2*default_base_cost");
+                throw new IllegalArgumentException("cost > 1.2*CLASSIC_BASE_COST");
             }
         }
     }
@@ -33,7 +33,7 @@ public class Base extends Product{
     @Override
     public void setCost(double cost) {
         if (!checkCost(cost)) {
-            throw new IllegalArgumentException("cost > 1.2*default_base_cost");
+            throw new IllegalArgumentException("cost > 1.2*CLASSIC_BASE_COST");
         }
         super.setCost(cost);
     }

@@ -33,7 +33,7 @@ public abstract class Product implements Identifiable, Pricable, Named{
 
     @Override
     public String toString() {
-        String str = String.format("%s : %.2f$\n", name, cost);
+        String str = String.format("%s : %.2fтнг", name, cost);
         return str;
     }
 

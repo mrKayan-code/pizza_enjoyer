@@ -1,7 +1,7 @@
 package model.pizza;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,23 +19,31 @@ public class Pizza implements Identifiable, Pricable, Named {
     private Size size;
     private Base base;
     private Side side;
-    private ArrayList<Slice> slices = new ArrayList<>();
+    private List<Slice> slices = new ArrayList<>();
+    private boolean is_combined = false;
     //private double cost; TODO(потом мб сделать is_updated_cost а ща оно динамически)
-    
+
     public Pizza(String name, Base base, Size size) {
         this.name = name;
         this.base = base;
-        this.size = size;
-        side = null;
+        setSize(size);
     }
 
-    public Pizza(String name, Base base, Size size, ArrayList<Ingredient> ingredients) {
+    public Pizza(String name, Base base, Size size, List<Ingredient> ingredients) {
         this(name, base, size);
         createUniformSlices(ingredients);
     }
 
-    public static Pizza createHalfCombined(String name, Base base, Size size, ArrayList<Ingredient> first_half_ingrs, ArrayList<Ingredient> second_half_ingrs) {
-        Pizza pizza = new Pizza(name, base, size);
+    public Pizza(String name, Base base, Size size, List<Ingredient> ingredients, Side side) {
+        this(name, base, size, ingredients);
+        this.setSide(side);
+    }
+
+    public static Pizza createHalfCombined(Base base, Size size, Pizza first_half_pizza, Pizza second_half_pizza) {
+        List<Ingredient> first_half_ingrs = first_half_pizza.getUniqueIngredients();
+        List<Ingredient> second_half_ingrs = second_half_pizza.getUniqueIngredients();
+
+        Pizza pizza = new Pizza("Половинка " + first_half_pizza.getName() + " + " + "половинка " + second_half_pizza.getName(), base, size);
 
         int slices_count = size.getSlicesCount();
         for (int i = 0; i < slices_count/2; i++) {
@@ -46,11 +54,13 @@ public class Pizza implements Identifiable, Pricable, Named {
             pizza.addSlice(new Slice(i, second_half_ingrs));
         }
 
+        pizza.is_combined = true;
+
         return pizza;
         
     }
 
-    private void createUniformSlices(ArrayList<Ingredient> ingredients) {
+    private void createUniformSlices(List<Ingredient> ingredients) {
         for (int i = 0; i < size.getSlicesCount(); i++) {
             Slice slice = new Slice(i, ingredients);
             slices.add(slice);
@@ -77,6 +87,18 @@ public class Pizza implements Identifiable, Pricable, Named {
         return true;
     }
 
+    public boolean addIngredientLikeUniform(Ingredient ingredient) {
+        if (slices.isEmpty() || slices.size() != size.getSlicesCount()) {
+            return false;
+        }
+
+        for (Slice slice : slices) {
+            slice.addIngredient(ingredient);
+        }
+
+        return true;
+    }
+
     public double calculateCost() {
         double all_cost = 0;
         
@@ -98,12 +120,16 @@ public class Pizza implements Identifiable, Pricable, Named {
         return base;
     }
 
-    public ArrayList<Slice> getSlices() {
+    public List<Slice> getSlices() {
         return slices;
     }
 
     public Size getSize() {
         return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
     }
 
     public boolean setSide(Side side) {
@@ -121,24 +147,73 @@ public class Pizza implements Identifiable, Pricable, Named {
 
     @Override
     public String toString() {
-        String str = String.format("%s %s : %.2f$\n", size.getName(), name, getCost());
-        // str += "\t" + "\tСостав: \n";
-        
-        // str += base.toString();
-        // for (Ingredient ingredient : ingredients) {
-        //     str += "\t" + ingredient.toString();
-        // }
+        String str = String.format("%s Пицца %s : %.2fтнг", size.getName(), name, getCost());
 
         return str;
     }
 
+    public String getFullPizzaCompositionString() {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append(String.format("%s Пицца %s : %.2fтнг\n", size.getName(), name, getCost()));
+        
+
+        if (isCombined()) { 
+            sb.append("    Первая половина:\n");
+            Slice slc1 = slices.get(0);
+            for (Ingredient ingr : slc1.getIngredients()) {
+                sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount()/2, size.getSlicesCount()/2));
+            }
+            sb.append("    Вторая половина:\n");
+            Slice slc2 = slices.get(size.getSlicesCount()-1);
+            for (Ingredient ingr : slc2.getIngredients()) {
+                sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount()/2, size.getSlicesCount()/2));
+            }
+
+        } else if (isUniform()) {
+            Slice first = slices.get(0);
+
+            for (Ingredient ingr : first.getIngredients()) {
+                sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount(), size.getSlicesCount()));
+            }
+        }
+        return sb.toString();
+    }
+
+    public String getFullPizzaCompositionStringForCatalog() {
+        StringBuilder sb = new StringBuilder();
+        
+        
+        
+        if (isUniform()) {
+            sb.append(String.format("%s : от %.2fтнг\n", name, getCost()));
+            Slice first = slices.get(0);
+
+            for (Ingredient ingr : first.getIngredients()) {
+                sb.append(String.format("\t%s\n", ingr.getName()));
+            }
+        }
+        // } else {
+        //     sb.append(String.format("Кастомная пицца %s : %.2fтнг\\n", name, getCost()));
+
+        //     for (Slice slice : slices) {
+        //         sb.append(String.format("\t%s", slice.toString()));
+        //     }
+        // }
+
+        return sb.toString();
+    }
+   
     public Pizza GetCopy() {
         Pizza copy = new Pizza(name, base, size);
         copy.setSide(side);
+        
 
         for (Slice slice : slices) {
             copy.addSlice(slice);
         }
+        
+        copy.is_combined = this.is_combined;
 
         return copy;
     }
@@ -157,14 +232,14 @@ public class Pizza implements Identifiable, Pricable, Named {
     }
 
     public List<Ingredient> getAllIngredients() {
-        ArrayList<Ingredient> all = new ArrayList<>();
+        List<Ingredient> all = new ArrayList<>();
         for (Slice slice : slices) {
             all.addAll(slice.getIngredients());
         }
         return all;
     }
 
-    public ArrayList<Ingredient> getUniqueIngredients() {
+    public List<Ingredient> getUniqueIngredients() {
         Map<String, Ingredient> uniqueMap = new LinkedHashMap<>();
         
         for (Slice slice : slices) {
@@ -184,4 +259,11 @@ public class Pizza implements Identifiable, Pricable, Named {
             .anyMatch(ing -> ing.getName().equalsIgnoreCase(ingredientName));
     }
 
+    public boolean isCombined() {
+        return is_combined;
+    }
+
+    public void setCombined(boolean combined) {
+        is_combined = combined;
+    }
 }   
