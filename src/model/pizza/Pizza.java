@@ -27,6 +27,7 @@ public class Pizza implements Identifiable, Pricable, Named {
         this.name = name;
         this.base = base;
         setSize(size);
+        initSlices();
     }
 
     public Pizza(String name, Base base, Size size, List<Ingredient> ingredients) {
@@ -60,10 +61,18 @@ public class Pizza implements Identifiable, Pricable, Named {
         
     }
 
-    private void createUniformSlices(List<Ingredient> ingredients) {
+    private void initSlices() {
         for (int i = 0; i < size.getSlicesCount(); i++) {
-            Slice slice = new Slice(i, ingredients);
+            Slice slice = new Slice(i);
             slices.add(slice);
+        }
+    }
+
+    private void createUniformSlices(List<Ingredient> ingredients) {
+        for (Slice slice : slices) {
+            for (Ingredient ingredient : ingredients) {
+                slice.addIngredient(ingredient);
+            }
         }
     }
 
@@ -82,7 +91,7 @@ public class Pizza implements Identifiable, Pricable, Named {
         return name;
     }
 
-    public boolean addSlice(Slice slice) {
+    private boolean addSlice(Slice slice) {
         this.slices.add(slice);
         return true;
     }
@@ -95,6 +104,20 @@ public class Pizza implements Identifiable, Pricable, Named {
         for (Slice slice : slices) {
             slice.addIngredient(ingredient);
         }
+
+        return true;
+    }
+
+    public boolean addIngredientToSlice(Ingredient ingredient, int position) {
+        if (slices.isEmpty() || slices.size() != size.getSlicesCount()) {
+            return false;
+        }
+
+        if (position < 0 || position >= slices.size()) {
+            return false;
+        }
+
+        this.slices.get(position).addIngredient(ingredient);
 
         return true;
     }
@@ -160,12 +183,12 @@ public class Pizza implements Identifiable, Pricable, Named {
         sb.append(String.format("\t%s\n", base.toString()));
 
         if (isCombined()) { 
-            sb.append("    Первая половина:\n");
+            sb.append("      Первая половина:\n");
             Slice slc1 = slices.get(0);
             for (Ingredient ingr : slc1.getIngredients()) {
                 sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount()/2, size.getSlicesCount()/2));
             }
-            sb.append("    Вторая половина:\n");
+            sb.append("      Вторая половина:\n");
             Slice slc2 = slices.get(size.getSlicesCount()-1);
             for (Ingredient ingr : slc2.getIngredients()) {
                 sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount()/2, size.getSlicesCount()/2));
@@ -178,10 +201,13 @@ public class Pizza implements Identifiable, Pricable, Named {
                 sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount(), size.getSlicesCount()));
             }
         } else {
-
+            for (Slice slice : slices) {
+                sb.append(String.format("\t%s\n", slice.toString()));
+            }
         }
 
         if (side != null) {
+            sb.append("      Дополнительно: \n");
             sb.append(String.format("\t%s\n", side.toString()));
         }
         return sb.toString();

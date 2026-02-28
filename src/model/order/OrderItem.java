@@ -59,6 +59,9 @@ public class OrderItem implements Identifiable {
     
     @Override
     public String toString() {
+        if (is_custom_pizza) {
+            return String.format("%d шт. ", quantity) + pizza.getFullPizzaCompositionString() + "*кастом*";
+        }
         return String.format("%d шт. ", quantity) + pizza.getFullPizzaCompositionString();
     }
 

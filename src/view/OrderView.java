@@ -39,25 +39,56 @@ public class OrderView {
             view.printOptions(options);
             String choice = view.readLine();
 
+            int quantity;
             switch (choice) {
                 case "0":
                     Pizza ordered_from_catalog = selectPizzaFromCatalog();
                     if (ordered_from_catalog == null) {
                         break;
                     }
-                    int quantity = view.readInt("Сколько заказать? (количество)");
+
+                    boolean is_double = false;
+                    switch (view.readLine("Удвоить ингредиенты? д/н")) {
+                        case "y":
+                        case "д":
+                            is_double = true;
+                            break;
+                        default:
+                            break;
+                    }
+                    quantity = view.readInt("Сколько заказать? (количество)");
                     if (quantity > 0) {
-                        OrderItem position = new OrderItem(ordered_from_catalog, quantity);
+                        OrderItem position = kitchen.createOrderItemFromCatalog(ordered_from_catalog, quantity, is_double);
                         order.addPosition(position);
                     } else {
                         view.printError("позиция в заказ не добавлена");
                     }
                     break;
                 case "1":
-                    
+                    Pizza ordered_combi = pizzaBuilder.createCombined();
+                    if (ordered_combi == null) {
+                        break;
+                    }
+                    quantity = view.readInt("Сколько заказать? (количество)");
+                    if (quantity > 0) {
+                        OrderItem position = new OrderItem(ordered_combi, quantity, true);
+                        order.addPosition(position);
+                    } else {
+                        view.printError("позиция в заказ не добавлена");
+                    }
                     break;
                 case "2":
-                    
+                    Pizza ordered_custom = pizzaBuilder.createCustom();
+                    if (ordered_custom == null) {
+                        break;
+                    }
+                    quantity = view.readInt("Сколько заказать? (количество)");
+                    if (quantity > 0) {
+                        OrderItem position = new OrderItem(ordered_custom, quantity, true);
+                        order.addPosition(position);
+                    } else {
+                        view.printError("позиция в заказ не добавлена");
+                    }
                     break;
                 case "3":
                     view.println(order.toString());
@@ -116,8 +147,8 @@ public class OrderView {
             );
         }
 
+
         return view.selectFromList("Каталог", pizzas_sizes, pizza -> pizza.getFullPizzaCompositionString());
-        //TODO(размер)
     }
 
     private Side selectSide(Pizza ordering) {

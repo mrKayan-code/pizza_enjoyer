@@ -29,8 +29,7 @@ public class MenuHandler {
             
             List<String> options = List.of(
                 "Заказ",
-                "Каталог",
-                "админка"
+                "Каталог"
             );
             
             view.printOptions(options);
@@ -43,10 +42,6 @@ public class MenuHandler {
                 case "1":
                     catalogView.showCatalogMenu();
                     break;
-                case "2":
-                    // TODO(кухня)
-                    break;
-                case "3":
                 case ":e":
                     running = false;
                     break;

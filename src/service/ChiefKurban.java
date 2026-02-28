@@ -145,18 +145,16 @@ public class ChiefKurban {
             .collect(Collectors.toList());
     }
 
-    public OrderItem createOrderItemFromCatalog(Pizza catalog_pizza, int quantity, boolean double_ingredients) {
-        Pizza order_pizza = catalog_pizza.getCopy();
-        
+    public OrderItem createOrderItemFromCatalog(Pizza selected_pizza, int quantity, boolean double_ingredients) {
         if (double_ingredients) {
-            for (Slice slice : catalog_pizza.getSlices()) {
-                for (Ingredient ingredient : slice.getIngredients()) {
+            for (Slice slice : selected_pizza.getSlices()) {
+                for (Ingredient ingredient : List.copyOf(slice.getIngredients())) {
                     slice.addIngredient(ingredient);
                 }                
             }
         }
 
-        return new OrderItem(order_pizza, quantity);
+        return new OrderItem(selected_pizza, quantity);
     }
 
     public OrderItem createCustomOrderItem(Pizza custom_pizza, int quantity) {

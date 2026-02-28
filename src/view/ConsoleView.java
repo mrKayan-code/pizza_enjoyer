@@ -216,9 +216,6 @@ public class ConsoleView {
             println(message);
             printList(filtered, item -> item.getFullPizzaCompositionStringForCatalog());
 
-            // println("\n расширенный вариант:");
-            // printList(filtered, item -> item.getFullPizzaCompositionString());
-
             awaitContinue();
 
         }
