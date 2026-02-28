@@ -38,7 +38,7 @@ public class MenuHandler {
             
             switch (choice) {
                 case "0":
-                    // TODO(заказы)
+                    orderView.startOrdering();
                     break;
                 case "1":
                     catalogView.showCatalogMenu();

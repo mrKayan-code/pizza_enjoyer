@@ -7,7 +7,8 @@ import model.order.Order;
 import model.order.OrderItem;
 import service.ChiefKurban;
 import model.pizza.Pizza;
-
+import model.side.Side;
+import model.pizza.Size;
 public class OrderView {
     private final ChiefKurban kitchen;
     private final ConsoleView view;
@@ -31,8 +32,8 @@ public class OrderView {
                 "Из каталога",
                 "Комбинированная",
                 "Кастом",
-                "Сформировать заказ",
-                "Предпросмотр заказа"
+                "Предпросмотр заказа",
+                "Сформировать заказ"
             );
             
             view.printOptions(options);
@@ -41,10 +42,15 @@ public class OrderView {
             switch (choice) {
                 case "0":
                     Pizza ordered_from_catalog = selectPizzaFromCatalog();
-                    if (ordered_from_catalog != null) {
-                        int quantity = view.readInt("Сколько заказать? (количество)");
+                    if (ordered_from_catalog == null) {
+                        break;
+                    }
+                    int quantity = view.readInt("Сколько заказать? (количество)");
+                    if (quantity > 0) {
                         OrderItem position = new OrderItem(ordered_from_catalog, quantity);
                         order.addPosition(position);
+                    } else {
+                        view.printError("позиция в заказ не добавлена");
                     }
                     break;
                 case "1":
@@ -54,7 +60,7 @@ public class OrderView {
                     
                     break;
                 case "3":
-                    
+                    view.println(order.toString());
                     break;
                 case "4":
                     
@@ -81,9 +87,42 @@ public class OrderView {
             return null;
         }
 
-        return view.selectFromList("Каталог", catalog, pizza -> pizza.getFullPizzaCompositionString());
+        Pizza ordering =  view.selectFromList("Каталог", catalog, pizza -> pizza.getFullPizzaCompositionStringForCatalog());
+
+        if (ordering != null) {
+            switch (view.readLine("Добавить/изменить бортик? д/н")) {
+                case "y":
+                case "д":
+                    Side side = selectSide(ordering);
+                    if (side != null) {
+                        ordering.setSide(side);
+                    }
+                    break;
+            
+                default:
+                    break;
+            }
+        } else {
+            return null;
+        }
+
+        view.println("Выберите размер");
+        
+        List<Pizza> pizzas_sizes = new ArrayList<>();
+
+        for (Size size : Size.values()) {
+            pizzas_sizes.add(
+                ordering.getCopyWithSize(size)
+            );
+        }
+
+        return view.selectFromList("Каталог", pizzas_sizes, pizza -> pizza.getFullPizzaCompositionString());
+        //TODO(размер)
+    }
+
+    private Side selectSide(Pizza ordering) {
+        List<Side> sides = kitchen.getPossibleSides(ordering);
+        
+        return view.selectFromList("Каталог", sides, side -> side.toString());
     }
 }
-
-
-//  я все завайбкодил клянус островом эпштейна!!!!!

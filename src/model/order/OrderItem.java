@@ -59,7 +59,7 @@ public class OrderItem implements Identifiable {
     
     @Override
     public String toString() {
-        return String.format("%d шт. ", quantity) + pizza.toString();
+        return String.format("%d шт. ", quantity) + pizza.getFullPizzaCompositionString();
     }
 
 

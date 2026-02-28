@@ -76,23 +76,22 @@ public class Order implements Identifiable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         
-        sb.append(String.format("Заказ id: %s", id.toString()));
+        sb.append(String.format("Заказ id: %s\n", id.toString()));
 
-        sb.append(String.format("Статус: %s", order_status.getName()));
+        sb.append(String.format("Статус: %s\n", order_status.getName()));
 
-        sb.append(String.format("Время заказа: %s", order_time.toString()));
+        sb.append(String.format("Время заказа: %s\n", order_time.toString()));
 
         if (isScheduled()) {
-            sb.append(String.format("Отложен до: %s", schedule_time.toString()));
+            sb.append(String.format("Отложен до: %s\n", schedule_time.toString()));
         }
 
         sb.append(String.format("Позиции:\n"));
 
         for (OrderItem position : positions) {
-            sb.append(String.format("\t%s", position.toString()));
+            sb.append(String.format("    %s\n", position.toString()));
         }
 
-        sb.append(String.format("\n"));
         sb.append(String.format("К оплате: %.2fтнг", calculateCost()));
         
         return sb.toString();

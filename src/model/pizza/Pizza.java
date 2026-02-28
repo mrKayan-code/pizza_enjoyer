@@ -157,6 +157,7 @@ public class Pizza implements Identifiable, Pricable, Named {
         
         sb.append(String.format("%s Пицца %s : %.2fтнг\n", size.getName(), name, getCost()));
         
+        sb.append(String.format("\t%s\n", base.toString()));
 
         if (isCombined()) { 
             sb.append("    Первая половина:\n");
@@ -176,23 +177,33 @@ public class Pizza implements Identifiable, Pricable, Named {
             for (Ingredient ingr : first.getIngredients()) {
                 sb.append(String.format("\t%s : %.2fтнг (%d кусков)\n", ingr.getName(), ingr.getCost()*size.getSlicesCount(), size.getSlicesCount()));
             }
+        } else {
+
+        }
+
+        if (side != null) {
+            sb.append(String.format("\t%s\n", side.toString()));
         }
         return sb.toString();
     }
 
     public String getFullPizzaCompositionStringForCatalog() {
         StringBuilder sb = new StringBuilder();
-        
-        
-        
-        if (isUniform()) {
-            sb.append(String.format("%s : от %.2fтнг\n", name, getCost()));
-            Slice first = slices.get(0);
 
-            for (Ingredient ingr : first.getIngredients()) {
-                sb.append(String.format("\t%s\n", ingr.getName()));
-            }
+        sb.append(String.format("%s : от %.2fтнг\n", name, getCost()));
+        
+        sb.append(String.format("\tОснова для пиццы %s\n", base.getName()));
+        
+        Slice first = slices.get(0);
+
+        for (Ingredient ingr : first.getIngredients()) {
+            sb.append(String.format("\t%s\n", ingr.getName()));
         }
+
+        if (side != null) {
+            sb.append(String.format("\tБортик с %s\n", side.getName()));
+        }
+
         // } else {
         //     sb.append(String.format("Кастомная пицца %s : %.2fтнг\\n", name, getCost()));
 
@@ -204,14 +215,29 @@ public class Pizza implements Identifiable, Pricable, Named {
         return sb.toString();
     }
    
-    public Pizza GetCopy() {
+    public Pizza getCopy() {
         Pizza copy = new Pizza(name, base, size);
-        copy.setSide(side);
+        
+        if (side != null) { 
+            copy.setSide(side);
+        }
         
 
         for (Slice slice : slices) {
             copy.addSlice(slice);
         }
+        
+        copy.is_combined = this.is_combined;
+
+        return copy;
+    }
+
+    public Pizza getCopyWithSize(Size size) {
+        Pizza copy = new Pizza(name, base, size, this.getUniqueIngredients());
+        if (side != null) { 
+            copy.setSide(side);
+        }
+        //TODO(разные классы для разных пицц)
         
         copy.is_combined = this.is_combined;
 

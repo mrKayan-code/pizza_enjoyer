@@ -76,18 +76,28 @@ public class ChiefKurban {
 
     }
     
-    public ArrayList<Ingredient> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients.getAll();
     }
 
-    public ArrayList<Base> getBases() {
+    public List<Base> getBases() {
         return bases.getAll();
     }
 
-    public ArrayList<Side> getSides() {
+    public List<Side> getSides() {
         return sides.getAll();
     }
-    
+
+    public List<Side> getPossibleSides(Pizza pizza) {
+        List<Side> possible = new ArrayList<>();
+        for (Side side : sides.getAll()) {
+            if (side.isCompatibily(pizza)) {
+                possible.add(side);
+            }
+        }
+        return possible;
+    }
+
     private boolean addIngredient(Ingredient ingredient) {
         ingredients.add(ingredient);
         return true;
@@ -125,7 +135,7 @@ public class ChiefKurban {
         return order;
     }
 
-    public ArrayList<Order> getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
 
@@ -136,7 +146,7 @@ public class ChiefKurban {
     }
 
     public OrderItem createOrderItemFromCatalog(Pizza catalog_pizza, int quantity, boolean double_ingredients) {
-        Pizza order_pizza = catalog_pizza.GetCopy();
+        Pizza order_pizza = catalog_pizza.getCopy();
         
         if (double_ingredients) {
             for (Slice slice : catalog_pizza.getSlices()) {
