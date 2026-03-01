@@ -109,7 +109,7 @@ public class PizzaBuilderView {
             return null;
         }
 
-        Pizza pizza = new Pizza("Кастом " + name, base, size);
+        Pizza pizza = new Pizza(name, base, size);
 
         // List<String> options = List.of(
         //     "Цельная",    
@@ -125,7 +125,8 @@ public class PizzaBuilderView {
         boolean choosing_ingrs = true;
         while ( choosing_ingrs) {
             List<String> options = List.of(
-                "Добавить ингредиент",    
+                "Добавить ингредиент",
+                "Показать что выбрано",
                 "Завершить выбор ингредиентов"
             );
 
@@ -136,11 +137,15 @@ public class PizzaBuilderView {
                 case "0":
                     chooseAndAddIngredient(pizza);
                     break;
-                case "1" :
+                case "1":
+                    view.println(pizza.getFullPizzaCompositionString());
+                case "2" :
                     choosing_ingrs = false;
                     break;
-                default:
+                case ":e":
                     return null;
+                default:
+                    break;
             }
         }
 
@@ -153,7 +158,7 @@ public class PizzaBuilderView {
                 }
                 break;
         
-            default:
+            default:    
                 break;
         }
 
