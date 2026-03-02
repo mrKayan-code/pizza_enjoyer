@@ -7,19 +7,15 @@ import service.ChiefKurban;
 
 public class MenuHandler {
     private final ConsoleView view;
-    private final ChiefKurban kitchen;
     private final CatalogView catalogView;
     private final OrderView orderView;
-    private final KitchenView kitchenView;
 
     private boolean running = true;
 
      public MenuHandler(ChiefKurban kitchen, Scanner scanner) {
-        this.kitchen = kitchen;
         this.view = new ConsoleView(scanner);
         this.catalogView = new CatalogView(kitchen, view);
         this.orderView = new OrderView(kitchen, view);
-        this.kitchenView = new KitchenView(kitchen, view);
     }
 
     public void start() {

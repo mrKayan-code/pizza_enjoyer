@@ -23,7 +23,8 @@ public class CatalogView {
                 "Ингредиенты",
                 "Основы для пиццы",
                 "Бортики",
-                "Пиццы"
+                "Пиццы",
+                "Заказы"
             );
             
             view.printOptions(options);
@@ -42,6 +43,8 @@ public class CatalogView {
                 case "3":
                     showPizzas();
                     break;
+                case "4":
+                    showOrders();
                 case ":e":
                     running = false;
                     break;
@@ -66,5 +69,9 @@ public class CatalogView {
 
     private void showPizzas() {
         view.showPizzaCatalog(kitchen.getPizzas(), "ПИЦЦЫ", "Пиццы: ");
+    }
+
+    private void showOrders() {
+        view.showOrders(kitchen.getOrders(), "ЗАКАЗЫ", "Заказы");
     }
 }

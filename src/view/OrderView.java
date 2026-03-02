@@ -21,7 +21,7 @@ public class OrderView {
     }
 
     public void startOrdering() {
-        Order order = kitchen.createOrder();
+        Order order = new Order();
 
         boolean choosing = true;
         while (choosing) {
@@ -31,8 +31,9 @@ public class OrderView {
             List<String> options = List.of(
                 "Из каталога",
                 "Комбинированная",
-                "Кастом",
+                "Кастом",                
                 "Предпросмотр заказа",
+                "Отложить",
                 "Сформировать заказ"
             );
             
@@ -94,7 +95,16 @@ public class OrderView {
                     view.println(order.toString());
                     break;
                 case "4":
-                    
+                    break;
+                case "5":
+                    boolean is_payed = payOrder(order);
+                    if (is_payed) {
+                        kitchen.addOrder(order);
+                    } else {
+                        view.printError("Оплатить не удалось");
+                        view.printError("Заказ отменен");
+                        view.awaitContinue();
+                    }
                 case ":e":
                     choosing = false;
                     break;
@@ -156,4 +166,24 @@ public class OrderView {
         
         return view.selectFromList("Каталог", sides, side -> side.toString());
     }
+
+    private boolean payOrder(Order order) {
+        view.clear();
+        view.printHeader("ОПЛАТА");
+        view.println(order.toString());
+
+        boolean is_payed = false;
+        
+        switch (view.readLine("Оплатить? д/н")) {
+            case "y":
+            case "д":
+                is_payed = true;
+                break;        
+            default:
+                break;
+        }
+
+        return is_payed;
+    }
+
 }

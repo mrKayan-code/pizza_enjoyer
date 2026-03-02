@@ -129,10 +129,9 @@ public class ChiefKurban {
         return pizza;
     }
 
-    public Order createOrder() {
-        Order order = new Order();
+    public boolean addOrder(Order order) {
         orders.add(order);
-        return order;
+        return true;
     }
 
     public List<Order> getOrders() {

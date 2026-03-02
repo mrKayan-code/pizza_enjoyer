@@ -12,7 +12,6 @@ public class Order implements Identifiable {
     private LocalDateTime order_time;
     private LocalDateTime schedule_time = null;
     private OrderStatus order_status;
-    private ArrayList<Guest> guests; //TODO(надо добавить фунцию кому из гостей какую пиццу дать)
 
     public Order() {
         this.order_time = LocalDateTime.now();

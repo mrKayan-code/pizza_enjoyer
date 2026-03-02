@@ -7,6 +7,7 @@ import model.common.Product;
 import model.pizza.Pizza;
 import util.Comparators;
 import util.FilterUtils;
+import model.order.Order;
 
 public class ConsoleView {
     private final Scanner scanner;
@@ -73,33 +74,13 @@ public class ConsoleView {
                 
                 String input = readLine();
                 
-                if (input.equals(":e")) 
-                    return -1;
-                
                 return Integer.parseInt(input);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 printError("Неправильное число, снова");
             }
         }
     }
     
-    public double readDouble(String prompt) {
-        while (true) {
-            try {
-                println(prompt + ":");
-                
-                String input = readLine();
-                
-                if (input.equals(":e")) 
-                    return -1;
-                
-                return Double.parseDouble(input);
-            } catch (NumberFormatException e) {
-                printError("Неправильное число, снова");
-            }
-        }
-    }
-
     public <T> T selectFromList(String prompt, List<T> items, java.util.function.Function<T, String> displayFunc) {
         if (items.isEmpty()) {
             printError("Список пуст");
@@ -268,6 +249,69 @@ public class ConsoleView {
         }
 
         return copy;
+    }
+
+    public List<Order> getFilteredOrders(List<Order> original_orders) {
+        List<Order> copy = List.copyOf(original_orders);
+            
+        List<String> options = List.of(
+            "Искать по названию пиццы",
+            "Сортировать по цене /",
+            "Сортировать по цене \\",
+            "Сортировать по дате новые",
+            "Сортировать по дате старые"
+        );
+
+        printOptions(options);
+        println("\t[any] Без сортировки");
+
+        String choice = readLine();
+        
+        switch (choice) {
+            case "0":
+                String filter = readLine();
+                copy = FilterUtils.filter(copy, order -> order.getPositions().stream()
+                                                                             .anyMatch(position -> position.getPizza().getName().toLowerCase()
+                                                                         .contains(filter.toLowerCase())));
+                break;
+            case "1":
+                copy = FilterUtils.filterAndSort(copy, order -> true, Comparators.orderByTotalCost(false));
+                break;
+            case "2":
+                copy = FilterUtils.filterAndSort(copy, order -> true, Comparators.orderByTotalCost(true));
+                break;
+            case "3":
+                copy = FilterUtils.filterAndSort(copy, order -> true, Comparators.orderByTime(false));
+                break;
+            case "4":
+                copy = FilterUtils.filterAndSort(copy, order -> true, Comparators.orderByTime(true));
+                break;
+            case ":e":
+                return null;
+        }
+
+        return copy;
+    }
+
+    public void showOrders(List<Order> original_orders, String header, String message) {
+        boolean running = true;
+        while (running) {
+            clear();
+            printHeader(header);
+            
+            List<Order> filtered = getFilteredOrders(original_orders);
+
+            if (filtered == null) {
+                running = false;
+                return;
+            }
+
+            println(message);
+            printList(filtered, item -> item.toString());
+
+            awaitContinue();
+            
+        }
     }
 
 }
