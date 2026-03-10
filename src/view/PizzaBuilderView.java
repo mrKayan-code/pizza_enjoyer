@@ -75,19 +75,13 @@ public class PizzaBuilderView {
 
         Side side;
 
-        switch (view.readLine("Добавить/изменить бортик? д/н")) {
-            case "y":
-            case "д":
-                side = view.selectFromList("Каталог", kitchen.getSides(), sid -> sid.toString());
-                if (side != null) {
-                    combi.setSide(side);
-                }
-                break;
-        
-            default:
-                break;
+        if (view.readBoolean("Добавить/изменить бортик?") ) {
+            side = view.selectFromList("Каталог", kitchen.getSides(), sid -> sid.toString());
+            if (side != null) {
+                combi.setSide(side);
+            }
         }
-
+        
         return combi;
     }
 
@@ -149,17 +143,11 @@ public class PizzaBuilderView {
             }
         }
 
-        switch (view.readLine("Добавить бортик? д/н")) {
-            case "y":
-            case "д":
-                Side side = view.selectFromList("Каталог", kitchen.getSides(), sid -> sid.toString());
-                if (side != null) {
-                    pizza.setSide(side);
-                }
-                break;
-        
-            default:    
-                break;
+        if (view.readBoolean("Добавить бортик?")) {
+            Side side = view.selectFromList("Каталог", kitchen.getSides(), sid -> sid.toString());
+            if (side != null) {
+                pizza.setSide(side);
+            }
         }
 
         return pizza;

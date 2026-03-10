@@ -1,5 +1,7 @@
 package view;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -81,6 +83,34 @@ public class ConsoleView {
         }
     }
     
+    public boolean readBoolean(String prompt) {
+        String inp = this.readLine(prompt + "д/н");
+
+        switch (inp.toLowerCase()) {
+            case "y":
+            case "д":
+                return true;
+        }
+        return false;        
+    }
+
+    public LocalDate readDate(String prompt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+        while (true) {
+            print(prompt + " (dd.MM.yyyy): ");
+            String input = readLine().trim();
+            
+            try {
+                return LocalDate.parse(input, formatter);
+            } catch (Exception e) {
+                printError("Неверный формат даты");
+            }
+        }
+    }
+
+
+
     public <T> T selectFromList(String prompt, List<T> items, java.util.function.Function<T, String> displayFunc) {
         if (items.isEmpty()) {
             printError("Список пуст");
@@ -103,7 +133,7 @@ public class ConsoleView {
                     return items.get(index);
                 }
                 printError("Неверный индекс");
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 printError("Введите число");
             }
         }
@@ -201,6 +231,10 @@ public class ConsoleView {
 
         }
     }
+    
+
+    //TODO(если успею то  дата и время)
+
 
     public List<Pizza> getFilteredCatalogPizzas(List<Pizza> original_catalog) {
         List<Pizza> copy = List.copyOf(original_catalog);
@@ -259,7 +293,8 @@ public class ConsoleView {
             "Сортировать по цене /",
             "Сортировать по цене \\",
             "Сортировать по дате новые",
-            "Сортировать по дате старые"
+            "Сортировать по дате старые",
+            "Фильтровать по дате"
         );
 
         printOptions(options);
@@ -286,6 +321,11 @@ public class ConsoleView {
             case "4":
                 copy = FilterUtils.filterAndSort(copy, order -> true, Comparators.orderByTime(true));
                 break;
+            case "5":
+                LocalDate filterDate = this.readDate("");
+                if (filterDate != null) {
+                    copy = FilterUtils.filter(copy, order -> order.getOrderTime().toLocalDate().equals(filterDate));
+                }
             case ":e":
                 return null;
         }

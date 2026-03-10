@@ -10,6 +10,5 @@ public class App {
 
         MenuHandler mh = new MenuHandler(kitchen, new Scanner(System.in, "cp866"));
         mh.start();
-        
     }
 }

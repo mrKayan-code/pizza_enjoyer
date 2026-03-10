@@ -1,5 +1,6 @@
 package view;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class OrderView {
             String choice = view.readLine();
 
             int quantity;
+            LocalDate scheduled_day = null;
             switch (choice) {
                 case "0":
                     Pizza ordered_from_catalog = selectPizzaFromCatalog();
@@ -49,14 +51,9 @@ public class OrderView {
                     }
 
                     boolean is_double = false;
-                    switch (view.readLine("Удвоить ингредиенты? д/н")) {
-                        case "y":
-                        case "д":
-                            is_double = true;
-                            break;
-                        default:
-                            break;
-                    }
+
+                    is_double = view.readBoolean("Удвоить ингредиенты?");
+                    
                     quantity = view.readInt("Сколько заказать? (количество)");
                     if (quantity > 0) {
                         OrderItem position = kitchen.createOrderItemFromCatalog(ordered_from_catalog, quantity, is_double);
@@ -95,6 +92,11 @@ public class OrderView {
                     view.println(order.toString());
                     break;
                 case "4":
+                    scheduled_day = view.readDate("Дата доставки");
+
+                    if (scheduled_day != null) {
+                        order.setScheduleTime(scheduled_day.atStartOfDay());
+                    }
                     break;
                 case "5":
                     boolean is_payed = payOrder(order);
@@ -130,18 +132,13 @@ public class OrderView {
 
         Pizza ordering =  view.selectFromList("Каталог", catalog, pizza -> pizza.getFullPizzaCompositionStringForCatalog());
 
+        
         if (ordering != null) {
-            switch (view.readLine("Добавить/изменить бортик? д/н")) {
-                case "y":
-                case "д":
-                    Side side = selectSide(ordering);
-                    if (side != null) {
-                        ordering.setSide(side);
-                    }
-                    break;
-            
-                default:
-                    break;
+            if (view.readBoolean("Добавить/изменить бортик?")) {
+                Side side = selectSide(ordering);
+                if (side != null) {
+                    ordering.setSide(side);
+                }
             }
         } else {
             return null;
@@ -172,18 +169,7 @@ public class OrderView {
         view.printHeader("ОПЛАТА");
         view.println(order.toString());
 
-        boolean is_payed = false;
-        
-        switch (view.readLine("Оплатить? д/н")) {
-            case "y":
-            case "д":
-                is_payed = true;
-                break;        
-            default:
-                break;
-        }
-
-        return is_payed;
+        return view.readBoolean("Оплатить?");
     }
 
 }
