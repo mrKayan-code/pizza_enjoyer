@@ -94,8 +94,10 @@ public class OrderView {
                 case "4":
                     scheduled_day = view.readDate("Дата доставки");
 
-                    if (scheduled_day != null) {
+                    if (scheduled_day != null && scheduled_day.atStartOfDay().isAfter(order.getOrderTime())) {
                         order.setScheduleTime(scheduled_day.atStartOfDay());
+                    } else {
+                        view.printError("Заказ не отложен");
                     }
                     break;
                 case "5":

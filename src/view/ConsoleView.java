@@ -101,6 +101,10 @@ public class ConsoleView {
             print(prompt + " (dd.MM.yyyy): ");
             String input = readLine().trim();
             
+            if (input.equals(":e")) {
+                return null;
+            }
+
             try {
                 return LocalDate.parse(input, formatter);
             } catch (Exception e) {
